@@ -1,1 +1,1 @@
-# MAT0120
+# MAT0120 (Computação Gráfica)
