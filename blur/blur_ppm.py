@@ -67,14 +67,15 @@ with open(file_path, 'w') as file:
             for k in range(3):
                 file.write(f"{int(blur[i,j,k])}\n")
             
-# edges = abs(pgm - blur)
+edges = abs(ppm - blur)
 
-# file_path = "edges_py.pgm"
+file_path = "edges_py.ppm"
 
-# with open(file_path, 'w') as file:
-#     file.write(f'P{P}\n')
-#     file.write(f'{width} {height}\n255\n')
-#     for i in range(height):
-#         for j in range(width):
-#             file.write(f"{int(edges[i, j])}\n")
+with open(file_path, 'w') as file:
+    file.write(f'P{P}\n')
+    file.write(f'{width} {height}\n255\n')
+    for i in range(height):
+        for j in range(width):
+            for k in range(3):
+                file.write(f"{int(edges[i, j, k])}\n")
             
