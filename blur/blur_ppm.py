@@ -4,7 +4,7 @@ import math
 ppm = []
 RGB = []
 
-with open('adam.ppm', 'r') as file: 
+with open('turtle.ppm', 'r') as file: 
     lines = file.readlines()
 
 mod = 2
@@ -67,15 +67,15 @@ with open(file_path, 'w') as file:
             for k in range(3):
                 file.write(f"{int(blur[i,j,k])}\n")
             
-edges = abs(ppm - blur)
+# edges = abs(ppm - blur)
 
-file_path = "edges_py.ppm"
+# file_path = "edges_py.ppm"
 
-with open(file_path, 'w') as file:
-    file.write(f'P{P}\n')
-    file.write(f'{width} {height}\n255\n')
-    for i in range(height):
-        for j in range(width):
-            for k in range(3):
-                file.write(f"{int(edges[i, j, k])}\n")
+# with open(file_path, 'w') as file:
+#     file.write(f'P{P}\n')
+#     file.write(f'{width} {height}\n255\n')
+#     for i in range(height):
+#         for j in range(width):
+#             for k in range(3):
+#                 file.write(f"{int(edges[i, j, k])}\n")
             

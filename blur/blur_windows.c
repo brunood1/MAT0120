@@ -35,7 +35,7 @@ void main(){ // int argc, char **argv
     FILE *fp;
 
     // TROCAR NOME DO ARQUIVO AQUI
-    fp = fopen("brown.ppm", "rb");
+    fp = fopen("turtle.ppm", "rb");
     // we need to use BINARY READING FORMATS, for two reasons:
     // a. it seems netpbm specifies the line feeds in its files must be plain LF
     // b. in raw formats, you may get a 0x10 (i.e. LF) character, you don't want that becoming CRLF and ruining your life
@@ -81,8 +81,6 @@ void main(){ // int argc, char **argv
         fclose(fp);
         exit(0);
     }
-
-    printf("file read\n");
 
     unsigned char (**blur)[3];
     blur = calloc(h, sizeof(char*)); // this is equivalent, just more readable imo
