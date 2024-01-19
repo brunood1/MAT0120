@@ -3,15 +3,15 @@
 #include <math.h>
 
 // int conv(unsigned char ***A, float **B, int y, int x){
-void conv(int height, int length, int width, int kernelSize, unsigned char A[height][length][width], float B[kernelSize][kernelSize], int y, int x, int output[width]){
+void conv(int height, int length, int width, int kernelSize, unsigned char (**A)[3], float B[kernelSize][kernelSize], int y, int x, int output[width]){
     int i, j, I, J;
 
     int s[3] = {0,0,0};
     int m = floor(kernelSize/2);
     int n = kernelSize - m;
     for (i = y-m ; i < y+n; i++){
-        for (j = x-m; j < y+n; j++){
-            if (i >= 0 && i < height && j >= 0 && j < width){
+        for (j = x-m; j < x+n; j++){
+            if (i >= 0 && i < height && j >= 0 && j < length){
                 I = i - (y-m);
                 J = j - (x-m);
                 s[0] += A[i][j][0] * B[I][J];
@@ -34,7 +34,7 @@ void main(){ // int argc, char **argv
     FILE *fp;
 
     // TROCAR NOME DO ARQUIVO AQUI
-    fp = fopen("adam.ppm", "r");
+    fp = fopen("adam.ppm", "rb");
     while ((caractere=getc(fp))=='#')
         while((caractere=getc(fp))!='\n');
     ungetc(caractere,fp);
@@ -46,17 +46,14 @@ void main(){ // int argc, char **argv
 
     fscanf(fp, "%u %u\n%hhu\n", &l, &h, &cmax);
 
-    unsigned char imagem[h][l][3];
+    unsigned char (**imagem)[3];
 
+    j=l*sizeof(char*);
+    imagem = malloc(j);
 
-    // unsigned char (**imagem)[3];
-
-    // j=l*sizeof(char*);
-    // imagem = malloc(j);
-
-    // j=h*3;
-    // for (i=0; i<l; i++)
-    // imagem[i] = malloc(j);
+    j=h*3;
+    for (i=0; i<l; i++)
+    imagem[i] = malloc(j);
 
 
     if(type==3){
@@ -88,13 +85,13 @@ void main(){ // int argc, char **argv
     int aux[3];
     float uniform[5][5];
     for (i = 0; i < 5; i++){
-        for (j = 0; j < 5; i++){
-            uniform[i][j] = 1/25;
+        for (j = 0; j < 5; j++){
+            uniform[i][j] = 0.04;
         }
     }
     
     for (i = 0; i < h; i++){
-        for (j = 0; j < l; i++){
+        for (j = 0; j < l; j++){
             conv(h,l,3,5,imagem,uniform,i,j,aux);
             blur[i][j][0] = aux[0];
             blur[i][j][1] = aux[1];
@@ -102,14 +99,14 @@ void main(){ // int argc, char **argv
         }
     }
 
-    unsigned char edges[h][l][3];
-    for (i = 0; i < h; i++){
-        for (j = 0; j < l; j++){
-            for (k = 0; k < 3; k++){
-                edges[i][j][k] = imagem[i][j][k] - blur[i][j][k];
-            }
-        }
-    }
+    // unsigned char edges[h][l][3];
+    // for (i = 0; i < h; i++){
+    //     for (j = 0; j < l; j++){
+    //         for (k = 0; k < 3; k++){
+    //             edges[i][j][k] = imagem[i][j][k] - blur[i][j][k];
+    //         }
+    //     }
+    // }
     
     
     fp = fopen("blur.ppm", "w");
@@ -120,12 +117,12 @@ void main(){ // int argc, char **argv
                 fprintf(fp,"%c%c%c", blur[i][j][0],blur[i][j][1],blur[i][j][2]);
         fclose(fp);
 
-    fp = fopen("edges.ppm", "w");
-    fprintf(fp, "P6\n");
-        fprintf(fp, "%u %u\n255\n", l, h);
-        for (j=0;j<h;j++)
-            for (i=0;i<l;i++)
-                fprintf(fp,"%c%c%c", edges[i][j][0],edges[i][j][1],edges[i][j][2]);
-        fclose(fp);
+    // fp = fopen("edges.ppm", "w");
+    // fprintf(fp, "P6\n");
+    //     fprintf(fp, "%u %u\n255\n", l, h);
+    //     for (j=0;j<h;j++)
+    //         for (i=0;i<l;i++)
+    //             fprintf(fp,"%c%c%c", edges[i][j][0],edges[i][j][1],edges[i][j][2]);
+    //     fclose(fp);
 
 }
