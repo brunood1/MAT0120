@@ -36,25 +36,14 @@ void main(){ // int argc, char **argv
 
     // TROCAR NOME DO ARQUIVO AQUI
     fp = fopen("turtle.ppm", "rb");
-    // we need to use BINARY READING FORMATS, for two reasons:
-    // a. it seems netpbm specifies the line feeds in its files must be plain LF
-    // b. in raw formats, you may get a 0x10 (i.e. LF) character, you don't want that becoming CRLF and ruining your life
 
-    // while ((caractere=getc(fp))=='#')
-    //    while((caractere=getc(fp))!='\n');
-    // ungetc(caractere,fp);
-    // by its definition, comments can't come before the P3, P6, as it is its magic number
-
-    fscanf(fp, "P%hhu\n", &type); //technically it accepts any whitespace. correct would be probably "P%hhu " (spaces important)
-
-    printf("image type: %hhu\n", type);
-
+    fscanf(fp, "P%hhu\n", &type); 
 
     while ((caractere=getc(fp))=='#')
         while((caractere=getc(fp))!='\n');
     ungetc(caractere,fp);
 
-    fscanf(fp, "%u %u\n%hhu\n", &l, &h, &cmax); //technically it accepts any whitespace. correct would be probably "%u %u %hhu " (spaces important)
+    fscanf(fp, "%u %u\n%hhu\n", &l, &h, &cmax); 
     printf("image is %i x %i\n", l, h);
 
     unsigned char imagem[h][l][3];
@@ -83,13 +72,10 @@ void main(){ // int argc, char **argv
     }
 
     unsigned char (**blur)[3];
-    blur = calloc(h, sizeof(char*)); // this is equivalent, just more readable imo
+    blur = calloc(h, sizeof(char*)); 
 
     for (i=0; i<h; i++)
-        blur[i] = calloc(l * 3, sizeof(char)); // this isnt't though
-
-    printf("blur allocated\n");
-
+        blur[i] = calloc(l * 3, sizeof(char));
 
     int aux[3];
     float uniform[5][5];    
@@ -99,8 +85,25 @@ void main(){ // int argc, char **argv
         }
     }
 
-    printf("uniform made\n");
+    double gaussian[5][5] = {
+        {0.003, 0.013, 0.022, 0.013, 0.003},
+        {0.013, 0.060, 0.098, 0.060, 0.013},
+        {0.022, 0.098, 0.162, 0.098, 0.022},
+        {0.013, 0.060, 0.098, 0.060, 0.013},
+        {0.003, 0.013, 0.022, 0.013, 0.003}
+    };
 
+    int sharpen[3][3] = {
+        {0, -1,  0},
+        {-1, 5, -1},
+        {0, -1,  0}
+    };
+
+    int bordas[3][3] = {
+        {-1, 0, 1},
+        {-2, 0, 2},
+        {-1, 0, 1}
+    };
 
     for (i = 0; i < h; i++){
         for (j = 0; j < l; j++){
@@ -113,15 +116,6 @@ void main(){ // int argc, char **argv
         }
     }
 
-    unsigned char edges[h][l][3];
-    for (i = 0; i < h; i++){
-        for (j = 0; j < l; j++){
-            for (k = 0; k < 3; k++){
-                edges[i][j][k] = imagem[i][j][k] - blur[i][j][k];
-            }
-        }
-    }
-
     fp = fopen("blur.ppm", "wb");
     fprintf(fp, "P6\n");
     fprintf(fp, "%u %u\n255\n", l, h);
@@ -130,14 +124,4 @@ void main(){ // int argc, char **argv
             fprintf(fp,"%c%c%c", blur[j][i][0],blur[j][i][1],blur[j][i][2]); //inverted j and i
     }
     fclose(fp);
-
-    fp = fopen("edges.ppm", "wb");
-    fprintf(fp, "P6\n");
-    fprintf(fp, "%u %u\n255\n", l, h);
-    for (j=0;j<h;j++) {
-        for (i=0;i<l;i++)
-            fprintf(fp,"%c%c%c", edges[j][i][0],edges[j][i][1],edges[j][i][2]); // inverted j and i
-    }
-    fclose(fp);
-
 }

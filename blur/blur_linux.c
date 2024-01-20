@@ -34,7 +34,7 @@ void main(){ // int argc, char **argv
     FILE *fp;
 
     // TROCAR NOME DO ARQUIVO AQUI
-    fp = fopen("brown.ppm", "r");
+    fp = fopen("turtle.ppm", "r");
     while ((caractere=getc(fp))=='#')
         while((caractere=getc(fp))!='\n');
     ungetc(caractere,fp);
@@ -46,9 +46,6 @@ void main(){ // int argc, char **argv
 
     fscanf(fp, "%u %u\n%hhu\n", &l, &h, &cmax);
 
-    // unsigned char imagem[l][h][3];
-
-
     unsigned char (**imagem)[3];
 
     j=l*sizeof(char*);
@@ -56,25 +53,25 @@ void main(){ // int argc, char **argv
 
     j=h*3;
     for (i=0; i<l; i++)
-    imagem[i] = malloc(j);
+        imagem[i] = malloc(j);
 
 
     if(type==3){
-    for(j=0; j<h; j++)
-        for(i=0; i<l; i++)
-            fscanf(fp, "%hhu %hhu %hhu", &imagem[i][j][0],&imagem[i][j][1],&imagem[i][j][2]);
-    fclose(fp);
+        for(j=0; j<h; j++)
+            for(i=0; i<l; i++)
+                fscanf(fp, "%hhu %hhu %hhu", &imagem[i][j][0],&imagem[i][j][1],&imagem[i][j][2]);
+        fclose(fp);
     }
     else if(type==6){
-    for(j=0; j<h; j++)
-        for(i=0; i<l; i++)
-            fscanf(fp, "%c%c%c", &imagem[i][j][0],&imagem[i][j][1],&imagem[i][j][2]);
-    fclose(fp);
+        for(j=0; j<h; j++)
+            for(i=0; i<l; i++)
+                fscanf(fp, "%c%c%c", &imagem[i][j][0],&imagem[i][j][1],&imagem[i][j][2]);
+        fclose(fp);
     }       
     else{
-    printf("Formato inválido!");
-    fclose(fp);
-    exit(0);
+        printf("Formato inválido!");
+        fclose(fp);
+        exit(0);
     }
 
     unsigned char (**blur)[3];
@@ -85,8 +82,6 @@ void main(){ // int argc, char **argv
     for (i=0; i<l; i++)
         blur[i] = malloc(j);
 
-    // unsigned char blur[l][h][3];
-
     unsigned char aux[3];
     float uniform[5][5];
     for (i = 0; i < 5; i++){
@@ -94,6 +89,26 @@ void main(){ // int argc, char **argv
             uniform[i][j] = 0.04;
         }
     }
+
+    double gaussian[5][5] = {
+        {0.003, 0.013, 0.022, 0.013, 0.003},
+        {0.013, 0.060, 0.098, 0.060, 0.013},
+        {0.022, 0.098, 0.162, 0.098, 0.022},
+        {0.013, 0.060, 0.098, 0.060, 0.013},
+        {0.003, 0.013, 0.022, 0.013, 0.003}
+    };
+
+    int sharpen[3][3] = {
+        {0, -1,  0},
+        {-1, 5, -1},
+        {0, -1,  0}
+    };
+
+    int bordas[3][3] = {
+        {-1, 0, 1},
+        {-2, 0, 2},
+        {-1, 0, 1}
+    };
     
     for (j = 0; j < h; j++){
         for (i = 0; i < l; i++){
@@ -123,13 +138,4 @@ void main(){ // int argc, char **argv
             for (i=0;i<l;i++)
                 fprintf(fp,"%c%c%c", blur[i][j][0],blur[i][j][1],blur[i][j][2]);
         fclose(fp);
-
-    fp = fopen("edges.ppm", "w");
-    fprintf(fp, "P6\n");
-        fprintf(fp, "%u %u\n255\n", l, h);
-        for (j=0;j<h;j++)
-            for (i=0;i<l;i++)
-                fprintf(fp,"%c%c%c", edges[i][j][0],edges[i][j][1],edges[i][j][2]);
-        fclose(fp);
-
 }

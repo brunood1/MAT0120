@@ -46,7 +46,14 @@ def convolution(A,B,y,x):
 
 blur = np.zeros((height,width,3))
 
-gaussian = np.array([ [0.003, 0.013, 0.022, 0.013, 0.003] , [0.013, 0.060, 0.098, 0.060, 0.013] , [0.022, 0.098, 0.162, 0.098, 0.022] , [0.013 , 0.060, 0.098, 0.060, 0.013] , [0.003, 0.013, 0.022, 0.013, 0.003] ])
+gaussian = np.array([[0.003, 0.013, 0.022, 0.013, 0.003], 
+                     [0.013, 0.060, 0.098, 0.060, 0.013], 
+                     [0.022, 0.098, 0.162, 0.098, 0.022], 
+                     [0.013, 0.060, 0.098, 0.060, 0.013], 
+                     [0.003, 0.013, 0.022, 0.013, 0.003]
+                    ])
+sharpen = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
+edges = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
 
 s = 9
 S = s**2
@@ -55,7 +62,7 @@ uniform = uniform/S
 
 for i in range(height):
     for j in range(width):
-        blur[i, j] = convolution(ppm, uniform, i,j)
+        blur[i, j] = convolution(ppm, sharpen, i,j)
         
 file_path = "blur_py.ppm"
 
