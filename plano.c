@@ -1,15 +1,15 @@
 #include <stdio.h>
 
-// gcc lista.c -o lista
-// ./lista > NOME.off
+// gcc plano.c -o plano
+// ./plano > plano.off
 
 // ABRIR COM MESHLAB
 
 int main(){
     printf("OFF\n");
     printf("121 100 220\n");
-    for (int y = -5; y < 6; y++){
-        for (int x = -5; x < 6; x++){
+    for (int y = -5; y <= 5; y++){
+        for (int x = -5; x <= 5; x++){
             printf("%d %d %d\n", x, y, 3*x + y); // TROCAR FUNÇÃO AQUI
         }
     }
