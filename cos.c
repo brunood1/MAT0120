@@ -11,7 +11,7 @@ int main(){
     printf("441 400 840\n");
     for (int y = -10; y <= 10; y++){
         for (int x = -10; x <= 10; x++){
-            printf("%d %d %d\n", x, y, cos(sqrt(x*x + y*y))); // TROCAR FUNÇÃO AQUI
+            printf("%d %d %f\n", x, y, cos(sqrt(x*x + y*y))); // TROCAR FUNÇÃO AQUI
         }
     }
     for (int j = 0; j < 420; j+=21){
