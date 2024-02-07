@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
-// gcc möbius.c -lm -o mobius
-// ./mobius > mobius.off
-
-// TAREFA ::: FAZER IMAGEM .ply
+// gcc möbius2.c -lm -o mobius2
+// ./mobius2 > mobius2.off
 
 // ABRIR COM MESHLAB
 
@@ -24,22 +22,21 @@ float z(float u, float v){
 
 int main(){
     printf("OFF\n");
-    // printf("1260 1240 2500\n");
-    printf("1323 1240 2562\n");
+    printf("1260 1240 2500\n");
     for (int v = -10; v <= 10; v++){
         for (float u = 0; u <= 6.2; u+=0.1){
             printf("%f %f %f\n", x(u,v), y(u,v), z(u,v)); // TROCAR FUNÇÃO AQUI
         }
     }
-    for (int j = 0; j < 1260; j+=63){
+    for (int j = 0; j < 1197; j+=63){
         for (int i = 0; i < 62; i++){
             printf("4 %d %d %d %d\n", i+j, i+63+j, i+64+j, i+1+j);
         }
     }
 
-    // for (int i = 0; i < 62; i++){
-    //     printf("4 %d %d %d %d\n", 1260+i,0+i,1+i,1261+i);
-    // }
+    for (int i = 0; i < 62; i++){
+        printf("4 %d %d %d %d\n", 1197+i,0+i,1+i,1198+i);
+    }
 
     return 0;
 }
