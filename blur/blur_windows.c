@@ -116,7 +116,7 @@ void main(){ // int argc, char **argv
         }
     }
 
-    fp = fopen("blur.ppm", "wb");
+    fp = fopen("blurred.ppm", "wb");
     fprintf(fp, "P6\n");
     fprintf(fp, "%u %u\n255\n", l, h);
     for (j=0;j<h;j++) {

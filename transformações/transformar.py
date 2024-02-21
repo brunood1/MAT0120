@@ -105,8 +105,9 @@ H = math.floor(xM - xm)
 L = math.floor(yM - ym)
 
 B = np.zeros((H, L, 3))
-for i in range(height-10):
-    for j in range(width-10):
+print(np.shape(B))
+for i in range(height-5):
+    for j in range(width-5):
         I = math.floor(Ainv[0,0]*i + Ainv[0,1]*j) - math.floor(xm)
         J = math.floor(Ainv[1,0]*i + Ainv[1,1]*j) - math.floor(ym)
         B[I,J,0] = original[i,j,0]
