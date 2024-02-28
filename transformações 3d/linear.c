@@ -69,7 +69,7 @@ void main(){
     int i,j;
     unsigned int V,F,A,(*T)[9]; //Matriz da conectividade Fx9. Limitada a faces com no máximo 8 lados
     float (*M)[3]; //Matriz Vx3
-    FILE *file = fopen("cubo.off","r");
+    FILE *file = fopen("OFF.off","r");
 
     //Lendo cabeçalho (Apenas cabelhos sem comentários)
     fscanf(file,"OFF\n%u %u %u\n",&V,&F,&A);
@@ -93,7 +93,9 @@ void main(){
 
     float (*N)[3];
     N = malloc(3*V*sizeof(float));
-    Matrix3x3 L = {{{1,0,0},{0,2,0},{0,0,3}}};
+    Matrix3x3 L = {{{1,0,2},
+                    {0,2,0},
+                    {0,0,3}}};
 
     for (int i = 0; i < V; i++){
         Matrix3x1 v = {M[i][0], M[i][1], M[i][2]};

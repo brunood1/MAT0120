@@ -113,11 +113,14 @@ void main(){
 
     float (*N)[3];
     N = malloc(3*V*sizeof(float));
-    Matrix4x4 L = {{{1, 0, 0, 1}, {0, 1, 0, 2}, {0, 0, 1, 3},{0, 0, 0, 1}}};
+    Matrix4x4 L = {{{1, 3, 0, 1}, 
+                    {1, 1, 2, 2}, 
+                    {1, 2, 1, 3},
+                    {0, 2, 0, 1}}};
 
     for (int i = 0; i < V; i++){
         Matrix4x1 v = {M[i][0], M[i][1], M[i][2], 1};
-        Matrix4x1 u = mutliplicarM4V(L,v);
+        Matrix4x1 u = multiplicarM4V(L,v);
         N[i][0] = u.data[0]/u.data[3];
         N[i][1] = u.data[1]/u.data[3];
         N[i][2] = u.data[2]/u.data[3];
