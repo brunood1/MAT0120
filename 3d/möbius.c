@@ -24,11 +24,10 @@ float z(float u, float v){
 
 int main(){
     printf("OFF\n");
-    // printf("1260 1240 2500\n");
     printf("1323 1240 2562\n");
     for (int v = -10; v <= 10; v++){
         for (float u = 0; u <= 6.2; u+=0.1){
-            printf("%f %f %f\n", x(u,v), y(u,v), z(u,v)); // TROCAR FUNÇÃO AQUI
+            printf("%f %f %f\n", x(u,v), y(u,v), z(u,v));
         }
     }
     for (int j = 0; j < 1260; j+=63){
@@ -36,10 +35,6 @@ int main(){
             printf("4 %d %d %d %d\n", i+j, i+63+j, i+64+j, i+1+j);
         }
     }
-
-    // for (int i = 0; i < 62; i++){
-    //     printf("4 %d %d %d %d\n", 1260+i,0+i,1+i,1261+i);
-    // }
-
+    
     return 0;
 }

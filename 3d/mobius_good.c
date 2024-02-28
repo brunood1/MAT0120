@@ -4,8 +4,6 @@
 // gcc möbius.c -lm -o mobius
 // ./mobius > mobius.off
 
-// TAREFA ::: FAZER IMAGEM .ply
-
 // ABRIR COM MESHLAB
 
 int R = 15;
