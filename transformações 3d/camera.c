@@ -174,7 +174,7 @@ void main(){
     float c = w.data[2];
 
     Matrix3x1 u = {-b,a,0};
-    Matrix3x1 v = {-c*a, -c*b, a*a + b*b};
+    Matrix3x1 v = {c*a, -c*b, a*a + b*b};
 
     Matrix3x1 w_norm = normalizarM31(w);
     Matrix3x1 u_norm = normalizarM31(u);
@@ -190,7 +190,6 @@ void main(){
                     {w_norm.data[0], w_norm.data[1], w_norm.data[2], 0}, 
                     {0, 0, 0, 1}}};
 
-    Matrix4x4 Dt = transposta4M(D);
     Matrix4x4 Lt = transposta4M(L);
 
     float z0 = 0.5;
@@ -204,81 +203,31 @@ void main(){
     float (*N)[3];
     N = malloc(3*V*sizeof(float));
 
-    Matrix4x4 C0 = multiplicarM4M(Lt, Dt);
-    Matrix4x4 C = multiplicarM4M(W, C0);
-
-    for (int i = 0; i < V; i++){
-        Matrix4x1 vi = {M[i][0], M[i][1], M[i][2], 1};
-        Matrix4x1 ui = multiplicarM4V(C,vi);Matrix3x1 lente = {4,4,4};
-    Matrix3x1 dir = {0,0,0};
-
-    Matrix3x1 w = {0,0,0};
-    for (i = 0; i<3; i++){
-        w.data[i] = lente.data[i] - dir.data[i];
-    }
-
-    float a = w.data[0];
-    float b = w.data[1];
-    float c = w.data[2];
-
-    Matrix3x1 u = {-b,a,0};
-    Matrix3x1 v = {-c*a, -c*b, a*a + b*b};
-
-    Matrix3x1 w_norm = normalizarM31(w);
-    Matrix3x1 u_norm = normalizarM31(u);
-    Matrix3x1 v_norm = normalizarM31(v);
-
-    Matrix4x4 D = {{{1, 0, 0, -lente.data[0]}, 
-                    {0, 1, 0, -lente.data[1]}, 
-                    {0, 0, 1, -lente.data[2]},
-                    {0, 0, 0, 1}}};
-
-    Matrix4x4 L = {{{u_norm.data[0], u_norm.data[1], u_norm.data[2], 0}, 
-                    {v_norm.data[0], v_norm.data[1], v_norm.data[2], 0}, 
-                    {w_norm.data[0], w_norm.data[1], w_norm.data[2], 0}, 
-                    {0, 0, 0, 1}}};
-
-    Matrix4x4 Dt = transposta4M(D);
-    Matrix4x4 Lt = transposta4M(L);
-
-    float z0 = 0.5;
-
-    Matrix4x4 W = {{{1, 0, 0, 0}, 
-                    {0, 1, 0, 0}, 
-                    {0, 0, 1/(1-z0), (-z0)/(1-z0)},
-                    {0, 0, 1, 0}}};
-
-
-    float (*N)[3];
-    N = malloc(3*V*sizeof(float));
-
-    Matrix4x4 C0 = multiplicarM4M(Lt, Dt);
+    Matrix4x4 C0 = multiplicarM4M(D, Lt);
     Matrix4x4 C = multiplicarM4M(W, C0);
 
     for (int i = 0; i < V; i++){
         Matrix4x1 vi = {M[i][0], M[i][1], M[i][2], 1};
         Matrix4x1 ui = multiplicarM4V(C,vi);
-        N[i][0] = ui.data[0]/ui.data[3];
-        N[i][1] = ui.data[1]/ui.data[3];
-        N[i][2] = ui.data[2]/ui.data[3];
+
+        for (int i = 0; i < V; i++){
+            Matrix4x1 vi = {M[i][0], M[i][1], M[i][2], 1};
+            Matrix4x1 ui = multiplicarM4V(C,vi);
+            N[i][0] = ui.data[0]/ui.data[3];
+            N[i][1] = ui.data[1]/ui.data[3];
+            N[i][2] = ui.data[2]/ui.data[3];
+        }
     }
-        N[i][0] = ui.data[0]/ui.data[3];
-        N[i][1] = ui.data[1]/ui.data[3];
-        N[i][2] = ui.data[2]/ui.data[3];
+
+    printf("OFF\n%u %u %u\n",V,F,A);
+    for(i=0;i<V;i++){ 
+        printf("%g %g %g\n",N[i][0],N[i][1],N[i][2]);
     }
-
-    print4M(C);
-
-
-    // printf("OFF\n%u %u %u\n",V,F,A);
-    // for(i=0;i<V;i++){ 
-    //     printf("%g %g %g\n",N[i][0],N[i][1],N[i][2]);
-    // }
-    // for(i=0;i<F;i++){
-    //     printf("%u",T[i][0]);
-    //     for(j=1;j<=T[i][0];j++) printf(" %u",T[i][j]);
-    //     printf("\n");
-    // }
+    for(i=0;i<F;i++){
+        printf("%u",T[i][0]);
+        for(j=1;j<=T[i][0];j++) printf(" %u",T[i][j]);
+        printf("\n");
+    }
 
     free(M);
     free(N);
