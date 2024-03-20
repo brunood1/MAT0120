@@ -174,7 +174,7 @@ void main(){
     float c = w.data[2];
 
     Matrix3x1 u = {-b,a,0};
-    Matrix3x1 v = {c*a, -c*b, a*a + b*b};
+    Matrix3x1 v = {-c*a, -c*b, a*a + b*b};
 
     Matrix3x1 w_norm = normalizarM31(w);
     Matrix3x1 u_norm = normalizarM31(u);
@@ -203,20 +203,16 @@ void main(){
     float (*N)[3];
     N = malloc(3*V*sizeof(float));
 
-    Matrix4x4 C0 = multiplicarM4M(D, Lt);
+    Matrix4x4 C0 = multiplicarM4M(Lt, D);
     Matrix4x4 C = multiplicarM4M(W, C0);
 
     for (int i = 0; i < V; i++){
         Matrix4x1 vi = {M[i][0], M[i][1], M[i][2], 1};
         Matrix4x1 ui = multiplicarM4V(C,vi);
 
-        for (int i = 0; i < V; i++){
-            Matrix4x1 vi = {M[i][0], M[i][1], M[i][2], 1};
-            Matrix4x1 ui = multiplicarM4V(C,vi);
-            N[i][0] = ui.data[0]/ui.data[3];
-            N[i][1] = ui.data[1]/ui.data[3];
-            N[i][2] = ui.data[2]/ui.data[3];
-        }
+        N[i][0] = ui.data[0]/ui.data[3];
+        N[i][1] = ui.data[1]/ui.data[3];
+        N[i][2] = ui.data[2]/ui.data[3];
     }
 
     printf("OFF\n%u %u %u\n",V,F,A);
