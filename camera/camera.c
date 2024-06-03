@@ -144,27 +144,71 @@ void print4M(Matrix4x4 A) {
     }
 }
 
-// Function to swap two float pointers
-void swap(float (*a)[2], float (*b)[2]) {
-    float temp[2];
-    temp[0] = (*a)[0];
-    temp[1] = (*a)[1];
-    (*a)[0] = (*b)[0];
-    (*a)[1] = (*b)[1];
-    (*b)[0] = temp[0];
-    (*b)[1] = temp[1];
+void merge(float arr[][2], int l, int m, int r) {
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    // Create temporary arrays
+    float L[n1][2], R[n2][2];
+
+    // Copy data to temporary arrays L[] and R[]
+    for (i = 0; i < n1; i++) {
+        L[i][0] = arr[l + i][0];
+        L[i][1] = arr[l + i][1];
+    }
+    for (j = 0; j < n2; j++) {
+        R[j][0] = arr[m + 1 + j][0];
+        R[j][1] = arr[m + 1 + j][1];
+    }
+
+    // Merge the temporary arrays back into arr[l..r]
+    i = 0;
+    j = 0;
+    k = l;
+    while (i < n1 && j < n2) {
+        if (L[i][1] <= R[j][1]) {
+            arr[k][0] = L[i][0];
+            arr[k][1] = L[i][1];
+            i++;
+        }
+        else {
+            arr[k][0] = R[j][0];
+            arr[k][1] = R[j][1];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy the remaining elements of L[], if any
+    while (i < n1) {
+        arr[k][0] = L[i][0];
+        arr[k][1] = L[i][1];
+        i++;
+        k++;
+    }
+
+    // Copy the remaining elements of R[], if any
+    while (j < n2) {
+        arr[k][0] = R[j][0];
+        arr[k][1] = R[j][1];
+        j++;
+        k++;
+    }
 }
 
-// Function to perform bubble sort
-void bubbleSort(float arr[][2], int n) {
-    for (int i = 0; i < n-1; i++) {
-        for (int j = 0; j < n-i-1; j++) {
-            // Compare the second column
-            if (arr[j][1] > arr[j+1][1]) {
-                // Swap if the second column is in the wrong order
-                swap(&arr[j], &arr[j+1]);
-            }
-        }
+// Function to perform merge sort
+void mergeSort(float arr[][2], int l, int r) {
+    if (l < r) {
+        // Same as (l+r)/2, but avoids overflow for large l and r
+        int m = l + (r - l) / 2;
+
+        // Sort first and second halves
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+
+        // Merge the sorted halves
+        merge(arr, l, m, r);
     }
 }
 
@@ -172,26 +216,24 @@ int cross_product(int a[2], int b[2], int c[2]) {
     return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
 }
 
-// Function to determine if a point is inside a quadrilateral
-int is_inside_quadrilateral(int p1[2], int p2[2], int p3[2], int p4[2], int p[2]) {
-    // Calculate cross products of all the triangles formed by the point and edges of the quadrilateral
+int pinta_quadrado(int p1[2], int p2[2], int p3[2], int p4[2], int p[2]) {
+    // produto vetorial de todos triangulos
     int cp1 = cross_product(p1, p2, p);
     int cp2 = cross_product(p2, p3, p);
     int cp3 = cross_product(p3, p4, p);
     int cp4 = cross_product(p4, p1, p);
     
-    // If all cross products have the same sign, the point is inside the quadrilateral
     if ((cp1 > 0 && cp2 > 0 && cp3 > 0 && cp4 > 0) || (cp1 < 0 && cp2 < 0 && cp3 < 0 && cp4 < 0))
-        return 1; // Inside
+        return 1; // dentro
     else
-        return 0; // Not inside
+        return 0; // fora
 }
 
 void reta(int *p0, int *p1, unsigned char (**imagem)[3]) {
     int p2[2];
     if ((abs(p0[0] - p1[0]) > 1) || (abs(p0[1] - p1[1]) > 1)) {
-        p2[0] = (p0[0] + p1[0]) / 2; // division by 2 rounded down
-        p2[1] = (p0[1] + p1[1]) / 2; // division by 2 rounded down
+        p2[0] = (p0[0] + p1[0]) / 2; 
+        p2[1] = (p0[1] + p1[1]) / 2; 
         imagem[p2[0]][p2[1]][0] = 255;
         imagem[p2[0]][p2[1]][1] = 255;
         imagem[p2[0]][p2[1]][2] = 255;
@@ -220,6 +262,7 @@ void main(){
     unsigned int V,F,A,(*T)[9]; //Matriz da conectividade Fx9. Limitada a faces com no máximo 8 lados
     float (*M)[3]; //Matriz Vx3
     FILE *file = fopen("cubo.off","r");
+    char nome[11];
 
     //Lendo cabeçalho (Apenas cabelhos sem comentários)
     fscanf(file,"OFF\n%u %u %u\n",&V,&F,&A);
@@ -241,7 +284,27 @@ void main(){
     }
     fclose(file);
 
-    Matrix3x1 lente = {3,3,4};
+    double xy[16][2] = {
+        {16.00, 0.00},
+    {15.31, 5.88},
+    {13.42, 11.31},
+    {10.39, 15.31},
+    {6.00, 16.00},
+    {1.69, 15.31},
+    {-2.42, 13.42},
+    {-5.88, 10.39},
+    {-9.00, 6.00},
+    {-11.31, 1.69},
+    {-13.42, -2.42},
+    {-15.31, -5.88},
+    {-16.00, -9.00},
+    {-15.31, -11.31},
+    {-13.42, -13.42},
+    {-10.39, -15.31}
+    };
+
+    for (int im = 0; im < 16; im++){
+    Matrix3x1 lente = {xy[im][1],xy[im][0],4};
     Matrix3x1 dir = {0,0,0};
 
     Matrix3x1 w = {0,0,0};
@@ -360,7 +423,7 @@ void main(){
         }     
     }
 
-    bubbleSort(X, F);
+    mergeSort(X, 0, F-1);
 
     float Y[V][2];
     for (i = 0; i < V; i++){
@@ -375,7 +438,7 @@ void main(){
         Y[i][1] -= (min2 -30);
     }
 
-    int dim = 500; // tamanho da imagem ppm
+    int dim = 400; // tamanho da imagem ppm
     unsigned char (**image)[3];
     image = calloc(dim, sizeof(char*)); 
 
@@ -385,6 +448,7 @@ void main(){
 
     for (int k = 0; k < F; k++){
         int face = X[k][0];
+        printf("FILE: %d ::: plotting face %d/%d\n", im, k,F);
 
         int pontos[4][2];
         for (i = 0; i < 4; i++){
@@ -396,15 +460,19 @@ void main(){
         int p2[2] = {pontos[1][1], pontos[1][0]};
         int p3[2] = {pontos[2][1], pontos[2][0]};
         int p4[2] = {pontos[3][1], pontos[3][0]};
+        printf("points: (%d, %d)\n", p1[0], p1[1]);
+        printf("points: (%d, %d)\n", p2[0], p2[1]);
+        printf("points: (%d, %d)\n", p3[0], p3[1]);
+        printf("points: (%d, %d)\n", p4[0], p4[1]);
 
         for (i = 0; i < dim; i++){
             for (j = 0; j < dim; j++){
                 int p[2] = {i,j};
-                if (is_inside_quadrilateral(p1, p2, p3, p4, p) == 1){
+                if (pinta_quadrado(p1, p2, p3, p4, p) == 1){
                     image[i][j][0] = 182 + 3*face;
                     image[i][j][1] = 5;
                     image[i][j][2] = 13;
-                    printf("(%d, %d) is inside", i, j);
+                    // printf("(%d, %d) is inside", i, j);
                 } 
             }
         }
@@ -414,8 +482,9 @@ void main(){
         reta(p3, p4, image);
         reta(p4, p1, image);
     }
-    
-    file = fopen("1.ppm", "wb");
+
+    sprintf(nome, "file%.2d.ppm", im);
+    file = fopen(nome, "wb");
     fprintf(file, "P6\n");
     fprintf(file, "%u %u\n255\n", dim, dim);
     for (j=0;j<dim;j++) {
@@ -423,11 +492,12 @@ void main(){
             fprintf(file,"%c%c%c", image[j][i][0],image[j][i][1],image[j][i][2]); 
     }
     fclose(file);
+    }
     
 
-    free(M);
-    free(N);
-    free(X);
-    free(T);
-    free(image);
+    // free(M);
+    // free(N);
+    // free(X);
+    // free(T);
+    // free(image);
 }
